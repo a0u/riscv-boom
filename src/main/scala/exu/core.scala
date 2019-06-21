@@ -416,7 +416,7 @@ class BoomCore(implicit p: Parameters, edge: freechips.rocketchip.tilelink.TLEdg
   }
 
   // all decoders are empty and ready for new instructions
-  dec_rdy := !(dec_stall_next_inst)
+  dec_rdy := dec_will_fire.last
 
   when (dec_rdy || io.ifu.clear_fetchbuffer) {
     dec_finished_mask := 0.U
