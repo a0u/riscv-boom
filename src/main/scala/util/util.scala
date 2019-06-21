@@ -359,21 +359,25 @@ object IsOlder
 }
 
 /**
-  * Object to determine whether queue
-  * index i0 is older than index i1.
-  *
-  * is i0 older than i1? (closest to zero). Provide the tail_ptr to the
-  *  queue. This is Cat(i1 <= tail, i1) because the rob_tail can point to a
-  * valid (partially dispatched) row.
+ * Set all bits at or below the highest order '1'.
  */
 object MaskLower
 {
-  def apply(in: UInt) = (0 until in.getWidth).map(i => in >> i.U).reduce(_|_)
+  def apply(in: UInt) = {
+    val n = in.getWidth
+    (0 until n).map(i => in >> i.U).reduce(_|_)
+  }
 }
 
+/**
+ * Set all bits at or above the lowest order '1'.
+ */
 object MaskUpper
 {
-  def apply(in: UInt) = (0 until in.getWidth).map(i => in << i.U).reduce(_|_)
+  def apply(in: UInt) = {
+    val n = in.getWidth
+    (0 until n).map(i => (in << i.U)(n-1,0)).reduce(_|_)
+  }
 }
 
 /**
