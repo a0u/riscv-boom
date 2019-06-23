@@ -176,6 +176,13 @@ class BoomCore(implicit p: Parameters, edge: freechips.rocketchip.tilelink.TLEdg
                          rob.io.flush.valid || // i.e. 'flush in-order part of the pipeline'
                          io.ifu.sfence_take_pc
 
+  /* A bit of a strange case: It's possible to have a mispredict during the first cycle of exception rollback.
+   * This works fine because:
+   *   1. The rob flush signal kills a superset of what the branch tag kills.
+   *   2. The rollback logic returns to the freelist a subset of what the branch allocation list returns.
+   *   3. The maptable ignores the rollback logic on this cycle in favor of loading a snapshot.
+   *   4. The ROB rollback logic is able to continue after the mispredict, as if it had rolled back those rows.
+   */
   assert (!(br_unit.brinfo.mispredict && rob.io.commit.rollback) || rob.io.flush.valid,
     "Can only have a mispredict during the first cycle of rollback.")
 
